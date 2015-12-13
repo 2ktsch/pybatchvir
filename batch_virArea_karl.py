@@ -82,6 +82,7 @@ def vareak(img, layer, inFolder, outFolder, bgColor, bgThresh, curvefilename, th
     thrlvl : int8 (threshold value for final separation)
     percentlist : string (name of file to save the histogram readings in outFolder)
     '''
+    curvefilename = inFolder + "/" + curvefilename
 # ########################## By Raymond Ostertag ##############################
     curve, curvered, curvegreen, curveblue, curvealpha = readcurvefile( curvefilename ) # Alpha is ignored
     icurve = extractpoints( curve )
@@ -89,6 +90,11 @@ def vareak(img, layer, inFolder, outFolder, bgColor, bgThresh, curvefilename, th
     icurvegreen = extractpoints( curvegreen )
     icurveblue = extractpoints( curveblue )
 # #############################################################################
+
+    # Initialize row in file to save data in...
+    afile = open(outFolder + "/" + percentlist + ".csv", 'a')
+    afile.write("K\t" + str(bgColor) + "\t" + str(bgThresh) + "\t" + str(curvefilename) + "\t" + str(thrlvl) + "\t \t \t")
+    
     # Start processing files! :D
     for file in os.listdir(inFolder):
         try:
@@ -126,18 +132,18 @@ def vareak(img, layer, inFolder, outFolder, bgColor, bgThresh, curvefilename, th
                     # Count the pixels
                     mean, stddev, median, pixels, count, percentile = pdb.gimp_histogram(layer, 0, 1, 255)
                     # Write the data to specified file
-                    afile = open(outFolder + "/" + percentlist + ".csv", 'a')
-                    afile.write(file + ", " + str(percentile) + "\n")
-                    afile.close
-
+                    afile.write(file + "\t" + str(percentile) + "\t")
+                    
                     # Save to png with transparency
-                    pdb.file_png_save(image, layer, outPath[:-3] + "png", outPath[:-3] + "png", 0, 9, 0, 0, 0, 0, 0)
+                    pdb.file_png_save(image, layer, outPath[:-4] + "_K.png", outPath[:-4] + "_K.png", 0, 9, 0, 0, 0, 0, 0)
                     # Clean up after ourselves so the computer doesn't run out of memory...
                     pdb.gimp_image_delete(image)
 
         except Exception as err:
             gimp.message("Unexpected error: " + str(err))
 
+    afile.write("\n")
+    afile.close
 
 register(
     "python_fu_batch_virArea_karl",
@@ -153,7 +159,7 @@ register(
         (PF_DIRNAME, "outFolder", "Output directory", ""),
         (PF_COLOR, "bgColor", "Background color", (255,0,0)),
         (PF_SLIDER, "bgThresh", "Background threshold", 10, (0, 255, 1)),
-        (PF_FILENAME, "curvefilename", "Curve file", ""),
+        (PF_STRING, "curvefilename", "Curve file", ""),
         (PF_SLIDER, "thrlvl", "Threshold", 142, (0, 255, 1)),
         (PF_STRING, "percentlist", "Name of file to save data in output directory", "percentiles"),
     ],

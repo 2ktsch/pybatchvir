@@ -17,6 +17,10 @@ def python_vareac(img, layer, inFolder, outFolder, bgColor, bgThresh, healthyL, 
     percentlist : string (name of file to save the histogram readings in outFolder)
     '''
 
+    # Initialize row in file to save data in...
+    afile = open(outFolder + "/" + percentlist + ".csv", 'a')
+    afile.write("C\t" + str(bgColor) + "\t" + str(bgThresh) + "\t" + str(healthyL) + "\t" + str(healThrL) + "\t" + str(healthyD) + "\t" + str(healThrD) + "\t")
+    
     for file in os.listdir(inFolder):
         try:
             inPath = inFolder + "/" + file
@@ -52,18 +56,21 @@ def python_vareac(img, layer, inFolder, outFolder, bgColor, bgThresh, healthyL, 
 
                     # Count the pixels
                     mean, stddev, median, pixels, count, percentile = pdb.gimp_histogram(layer, 0, 1, 255)
+                    
                     # Write the data to specified file
-                    afile = open(outFolder + "/" + percentlist + ".csv", 'a')
-                    afile.write(file + "," + str(percentile) + "\n")
-                    afile.close
+                    afile.write(file + "\t" + str(percentile) + "\t")
 
                     # Save to png with transparency
-                    pdb.file_png_save(image, layer, outFolder + "/" + image.name[:-3] + "png", outFolder + "/" + image.name[:-3] + "png", 0, 9, 0, 0, 0, 0, 0)
+                    pdb.file_png_save(image, layer, outFolder + "/" + image.name[:-4] + "_C.png", outFolder + "/" + image.name[:-4] + "_C.png", 0, 9, 0, 0, 0, 0, 0)
                     # Clean up after ourselves to not run out of memory...
                     pdb.gimp_image_delete(image)
 
         except Exception as err:
             gimp.message("Unexpected error: " + str(err))
+
+
+    afile.write("\n")
+    afile.close
 
 
 register(
