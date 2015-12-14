@@ -1,5 +1,5 @@
 # pybatchvir
-GIMP python scripts to batch process images of leaves to aid plant breeders in assessing chlorotic area as a percentage of leaf area.
+GIMP python scripts that batch process images of leaves to aid plant breeders in assessing chlorotic area as a percentage of leaf area.
 
 The purpose of these scripts is to automate the processing of images (samples) in plant breeding or phytopathology programs.
 They were created after realizing that doing this stuff by hand is tedious and inefficient for production use.  We (Claudia Gordillo and Karl Schindler) were doing a video (for a plant breeding class) on methods (using image processing in the GIMP) to calculate percentage of virus infected tissue in plants.  We came up with two generalized methods, though there may be better ways.
